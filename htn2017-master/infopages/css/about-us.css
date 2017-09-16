@@ -1,0 +1,41 @@
+/*!
+ * Start Bootstrap - Full Width Pics (http://startbootstrap.com/template-overviews/full-width-pics)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-full-width-pics/blob/master/LICENSE)
+ */
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans');
+
+body {
+  /*padding-top: 54px;*/
+  background-image:url("zoltan-kovacs-319972.jpg");
+	background-size: cover;
+	background-position: center;
+	font-family: 'Alegreya Sans', Cursive;
+	color:white;
+ background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-top: 56px;
+    }
+}
+
+.bg-image-full {
+    background: no-repeat center center scroll;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+header.masthead{
+	background-size: cover;
+	background-width: 70%;
+	padding-top: 0%;
+	text-shadow: 0px 4px 3px rgba(0,0,0,0.7),
+			     0px 8px 13px rgba(0,0,0,0.7),
+			     0px 18px 23px rgba(0,0,0,0.7);
+
+}
