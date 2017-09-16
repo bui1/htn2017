@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans:400,700|Vollkorn:400,700');
+
+body{
+	background-image:url("https://images.unsplash.com/photo-1504257542762-f45d08aa2166?dpr=2&auto=compress,format&fit=crop&w=767&h=1150&q=80&cs=tinysrgb&crop=");
+	background-size: cover;
+	background-position: center;
+	font-family: 'Alegreya Sans', Cursive;
+	color:white;
+ background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+html{
+	height:100%;
+}
+
+header.masthead{
+	background: url('flags.png') no-repeat center center scroll;
+	background-size: cover;
+	background-width: 70%;
+	text-align:center;
+	padding-top: 0%;
+	text-shadow: 0px 4px 3px rgba(50,0,0,0.4),
+			     0px 8px 13px rgba(0,0,0,0.3),
+			     0px 18px 23px rgba(0,0,0,0.1);
+
+}
+
+
+h1{
+	font-weight: 700;
+	font-size:7em;
+
+}
+
+hr{
+	width:400px;
+	border-top: 1px solid #f8f8f8;
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+.navbar-header{
+	background-color: rgba(70,68,66,0.3);
+
+}
+
+.info{
+	padding-top:10%;
+}
+
+.p-5{
+	padding-top: 15%;
+}
+.p-6{
+	padding-top: 10%;
+}
+
+header.masthead > .overlay {
+    padding: 1rem 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+    font-family: Lato;
+    font-size: 80%;
+}
+
+@media (min-width: 900px) {
+    header.masthead > .overlay {
+        padding: 10rem 0;
+    }
+}
+
+p{
+	font-size: 20px;
+}
+
+h2{
+	font-family: Vollkorn;
+	font-weight: 700px;
+	font-size: 40px;
+}
