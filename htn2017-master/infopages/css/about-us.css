@@ -3,9 +3,17 @@
  * Copyright 2013-2017 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-full-width-pics/blob/master/LICENSE)
  */
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans');
 
 body {
-    padding-top: 54px;
+  /*padding-top: 54px;*/
+  background-image:url("wojtek-witkowski-189.jpg");
+	background-size: cover;
+	background-position: center;
+	font-family: 'Alegreya Sans', Cursive;
+	color:white;
+ background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 @media (min-width: 992px) {
