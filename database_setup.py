@@ -16,7 +16,8 @@ class User(Base):
     last_name = Column(String(20))
     birthdate = Column(DateTime)
     gender = Column(Enum('male', 'female', 'other'))
-
+    email = Column(String(100), nullable=False)
+    
 # Language class
 class Lang(Base):
     __tablename__ = 'lang'
