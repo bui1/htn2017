@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
 from flask_socketio import SocketIO, join_room, leave_room
 from flask_login import *
-import loginform
+from form import LoginForm
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -65,7 +65,7 @@ def user_edit(user_id):
 ### LOGIN ####
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(user_id)
+    return session.query(User).filter_by(id=user_id).first()
 
 @app.route("/logout/")
 @login_required
@@ -78,18 +78,19 @@ def login():
     form = LoginForm()
     
     if form.validate_on_submit():
-        user = session.query(User).filter(username = request.form['username']).first()
+        user = session.query(User).filter_by(username = request.form['username']).first()
 
         login_user(user)
 
-        flask.flash('Logged in successfully.')
+        flash('Logged in successfully.')
 
         
-        return redirect(url_for('showHomepage'))
-    else:
-        flask.flash('Username or password incorrect', 'error')
         
-    return flask.render_template('login.html', form=form)
+        return redirect(url_for('dashboard_view', user_id=user.id))
+    else:
+        flash('Username or password incorrect', 'error')
+        
+    return render_template('login.html', form=form)
 
 # New profile
 @app.route('/user/new', methods = ['GET', 'POST'])
@@ -164,7 +165,7 @@ def user_new():
             except Exception as e:
                 print(e)
     
-        return redirect(url_for('user_view', user_id=user_id))
+        return redirect(url_for('dashboard_view'))
 
     # user sees form
     else:
@@ -183,10 +184,9 @@ def get_lang_ids(langs):
 #### DASHBOARD #####
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 @login_required
-def dashboard_view(user_id):
-    user = session.query(User).filter_by(id = user_id).one()
-    
-    return(render_template ('dashboard.html', user=user))
+def dashboard_view():
+    # return(render_template ('dashboard.html')) 
+    return("...")
 
 #### UPLOAD ####
 def allowed(filename):
@@ -220,7 +220,7 @@ def upload(user_id):
 @app.route('/chat/', methods = ['GET', 'POST'])
 @login_required
 def chat_view():
-    return("hello")
+    return(render_template("chat.html"))
 
 @socketio.on('get message', namespace='/chat')
 def handle_my_custom_namespace_event(json):
