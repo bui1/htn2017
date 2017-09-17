@@ -138,7 +138,7 @@ def user_new():
             
     # user sees form
     else:
-        return(render_template('user_edit.html'))
+        return(render_template('profile-page.html'))
 
 # get the id of a list of languages
 def get_lang_ids(langs):
