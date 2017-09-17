@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, redirect,jsonify, url_for, flash
+erom flask import Flask, session, render_template, request, redirect,jsonify, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_login import *
 from form import LoginForm
@@ -253,3 +253,4 @@ def send_msg(lang):
 
 if __name__ == '__main__':
     socketio.run(app)
+	return "Hello Azure!"
