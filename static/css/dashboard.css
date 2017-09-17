@@ -1,0 +1,66 @@
+/*!
+ * Start Bootstrap - Shop Homepage (http://startbootstrap.com/template-overviews/shop-homepage)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-shop-homepage/blob/master/LICENSE)
+ */
+@import url('https://fonts.googleapis.com/css?family=Alegreya+Sans');
+
+body {
+    padding-left: 15px;
+    padding-top: 54px;
+    font-family: 'Alegreya Sans', Cursive;
+    text-decoration: none;
+    background-image: url("https://images.unsplash.com/photo-1502245154810-e9b77f99a89c?dpr=2&auto=compress,format&fit=crop&w=767&h=511&q=80&cs=tinysrgb&crop=");
+    background-position: fixed;
+}
+
+@media (min-width: 992px) {
+    body {
+        padding-top: 56px;
+    }
+}
+
+.img-circle{
+  border-radius: 100%;
+  padding-left: 0px;
+}
+
+.my-4 {
+  font-size: 20pt;
+  padding-bottom: 10px;
+}
+
+.list-group {
+  padding-bottom: 15px;
+}
+
+.container {
+  padding-left: 0px;
+  max-width: 100%;
+  padding-top: 10px;
+}
+
+.col-lg-2 {
+  padding-top: 30px;
+  background-color: silver;
+  padding-right: 20px;
+  width: 700px;
+}
+
+.col-1g-9 {
+  padding-left: 100px;
+  padding-top: 100px;
+}
+
+.message {
+  font-size: 24pt;
+  line-height: 80%;
+  padding-top: 20px;
+}
+
+h2{
+  font-weight:700px;
+  padding: 10px;
+}
+
+
