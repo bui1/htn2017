@@ -6,17 +6,33 @@ import datetime
  
 Base = declarative_base()
 
+
 # User class
 class User(Base):
     __tablename__ = 'user'
    
     id = Column(Integer, primary_key=True)
     username = Column(String(20))
-    first_name = Column(String(20), nullable=False)
-    last_name = Column(String(20))
     birthdate = Column(DateTime)
     gender = Column(Enum('male', 'female', 'other'))
     email = Column(String(100), nullable=False)
+    password = Column(String(200))
+
+    authenticated = False
+    active = False
+    anon = False
+    
+    def is_authenticated():
+        return self.authenticated
+
+    def is_active(self):
+        return self.active
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
     
 # Language class
 class Lang(Base):
@@ -33,8 +49,7 @@ class LangLearn(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     __table_args__ = (
         PrimaryKeyConstraint('lang_id', 'user_id'),
-        )
-    
+        )    
 # Language to teach  relationship
 class LangTeach(Base):
     __tablename__ = 'lang_teach'
@@ -51,6 +66,7 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    thread = Column(Integer)
     body = Column(Text, nullable=False)
     attachment = Column(String(500))
 

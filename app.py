@@ -30,6 +30,11 @@ login_manager.init_app(app)
 def showHomepage():
     return render_template('index.html')
 
+# show about us
+@app.route('/about-us')
+def showAbout():
+    return(render_template('aboutus.html'))
+
 #### PROFILE ####
 
 # View profile
@@ -71,7 +76,7 @@ def load_user(user_id):
 @login_required
 def logout():
     logout_user()
-    return redirect('showHomepage')
+    return redirect(url_for('showHomepage'))
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
@@ -141,7 +146,9 @@ def get_lang_ids(langs):
 #### DASHBOARD #####
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 @login_required
-def dashboard_view(user):
+def dashboard_view():
+    user = session.get('user_id');
+    
     return(render_template ('dashboard.html', user=user)) 
 
 #### UPLOAD ####
@@ -151,6 +158,7 @@ def allowed(filename):
     if '.' in filename and filename.split('.',1)[1].lower() in allowed:
         return true
     return false
+
 
 @app.route('/upload/', methods = ['GET', 'POST'])
 @login_required
