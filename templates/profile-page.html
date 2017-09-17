@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Shop Item - Start Bootstrap Template</title>
+    <title>Register</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="#"> Multi-Linguist </a>
+        <a class="navbar-brand" href="#">Parlez Now</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -54,7 +54,7 @@
           <div class="card mt-4">
             <img class="card-img-top img-fluid" src="http://placehold.it/100x100" alt="">
               <div class="card-body">
-                <h3 class="card-title">{{ user.username }}</h3>
+                <h3 class="card-title">{% if user %} {{ user.username }} {% else %} Register {% endif %}</h3>
                   </div>
                 </div>
               <div class="list-group">
@@ -72,139 +72,123 @@
             <div class="card-body">
               <form method="post" action="#">
                 <div class="form-group">
-                <label for="exampleInputEmail1">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="{{ user.email }}">
+                <label for="exampleInputEmail1"><strong>Email address:</strong></label>
+                <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="{% if user %}{{ user.email }}{% else %}Email{% endif %}">
               </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+
+	     <div class="form-group">
+                <label for="exampleInputUsername"><strong>Username:</strong></label>
+                <input type="text" name="username" class="form-control" id="exampleInputUsername" placeholder="Username">
               </div>
 
 
-              <p> Sex you identify with </p>
+	      <div class="form-group">
+                <label for="exampleInputPassword1"><strong>Password:</strong></label>
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+              </div>
+
+
+              <p><strong>Sex you identify with:</strong></p>
               <label for="Male"> Male </label>
-                <input id="Male" type="radio" name="gender" value="male" {% if not female %} checked {% endif %}>
+                <input id="Male" type="radio" name="gender" value="male" {% if user and not female %} checked {% endif %}>
               <label for="Female"> Female </label>
-                <input id="Female" type="radio" name="gender" value="female" {% if female %} checked {% endif %}>
+                <input id="Female" type="radio" name="gender" value="female" {% if user and female %} checked {% endif %}>
 
-              <p>Fluent Languages</p>
-              <div class="container">
-                <img class="card-img-side img-fluid" src="http://placehold.it/70x40" alt="">
-                <a href="#" class="btn btn-success">+</a>
-                <p>Language1</p>
-              </div>
-              <hr>
-              <p>Wants to learn</p>
-              <div class="container">
-                <img class="card-img-side img-fluid" src="http://placehold.it/70x40" alt="">
-                <a href="#" class="btn btn-success">+</a>
-                <p>Language1</p>
-              </div>
+
+		<p><strong>Wants to learn:</strong></p>
+		<label for="English"> English </label>
+                <input id="English" type="radio" name="gender" value="english" {% if user and not female %} checked {% endif %}>
+              <label for="French"> Frence </label>
+                <input id="French" type="radio" name="gender" value="french" {% if user and female %} checked {% endif %}>
+
+
+            </div>
               <hr>
             </div>
 
-            <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Month
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">Jan</a></li>
-                <li><a href="#">Feb</a></li>
-                <li><a href="#">Mar</a></li>
-                <li><a href="#">Apr</a></li>
-                <li><a href="#">May</a></li>
-                <li><a href="#">June</a></li>
-                <li><a href="#">July</a></li>
-                <li><a href="#">Aug</a></li>
-                <li><a href="#">Sept</a></li>
-                <li><a href="#">Oct</a></li>
-                <li><a href="#">Nov</a></li>
-                <li><a href="#">Dec</a></li>
-              </ul>
+	    
+            <select class="selectpicker" name="birthmonth">
+                <option><a href="#">01</a></option>
+                <option><a href="#">02</a></option>
+                <option><a href="#">03</a></option>
+                <option><a href="#">04</a></option>
+                <option><a href="#">05</a></option>
+                <option><a href="#">06</a></option>
+                <option><a href="#">07</a></option>
+                <option><a href="#">08</a></option>
+                <option><a href="#">09</a></option>
+                <option><a href="#">10</a></option>
+                <option><a href="#">11</a></option>
+                <option><a href="#">12</a></option>
+              </select>
 
-              <span class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Day
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <select class="selectpicker" name="birthday">
+                <option><a href="#">01</a></option>
+                <option><a href="#">02</a></option>
+                <option><a href="#">03</a></option>
+                <option><a href="#">04</a></option>
+                <option><a href="#">05</a></option>
+                <option><a href="#">06</a></option>
+                <option><a href="#">07</a></option>
+                <option><a href="#">08</a></option>
+                <option><a href="#">09</a></option>
+                <option><a href="#">10</a></option>
+                <option><a href="#">11</a></option>
+                <option><a href="#">12</a></option>
+                <option><a href="#">13</a></option>
+                <option><a href="#">14</a></option>
+                <option><a href="#">15</a></option>
+                <option><a href="#">16</a></option>
+                <option><a href="#">17</a></option>
+                <option><a href="#">18</a></option>
+                <option><a href="#">19</a></option>
+                <option><a href="#">20</a></option>
+                <option><a href="#">21</a></option>
+                <option><a href="#">22</a></option>
+                <option><a href="#">23</a></option>
+                <option><a href="#">24</a></option>
+                <option><a href="#">25</a></option>
+                <option><a href="#">26</a></option>
+                <option><a href="#">27</a></option>
+                <option><a href="#">28</a></option>
+                <option><a href="#">29</a></option>
+                <option><a href="#">30</a></option>
+                <option><a href="#">31</a></option>
+              </select>
 
-                <li><a href="#">01</a></li>
-                <li><a href="#">02</a></li>
-                <li><a href="#">03</a></li>
-                <li><a href="#">04</a></li>
-                <li><a href="#">05</a></li>
-                <li><a href="#">06</a></li>
-                <li><a href="#">07</a></li>
-                <li><a href="#">08</a></li>
-                <li><a href="#">09</a></li>
-                <li><a href="#">10</a></li>
-                <li><a href="#">11</a></li>
-                <li><a href="#">12</a></li>
-                <li><a href="#">13</a></li>
-                <li><a href="#">14</a></li>
-                <li><a href="#">15</a></li>
-                <li><a href="#">16</a></li>
-                <li><a href="#">17</a></li>
-                <li><a href="#">18</a></li>
-                <li><a href="#">19</a></li>
-                <li><a href="#">20</a></li>
-                <li><a href="#">21</a></li>
-                <li><a href="#">22</a></li>
-                <li><a href="#">23</a></li>
-                <li><a href="#">24</a></li>
-                <li><a href="#">25</a></li>
-                <li><a href="#">26</a></li>
-                <li><a href="#">27</a></li>
-                <li><a href="#">28</a></li>
-                <li><a href="#">29</a></li>
-                <li><a href="#">30</a></li>
-                <li><a href="#">31</a></li>
-              </ul>
-              </span>
+              <select class="selectpicker" name="birthyear">
+                <option><a href="#">70</a></option>
+                <option><a href="#">72</a></option>
+                <option><a href="#">73</a></option>
+                <option><a href="#">74</a></option>
+                <option><a href="#">75</a></option>
+                <option><a href="#">76</a></option>
+                <option><a href="#">77</a></option>
+                <option><a href="#">78</a></option>
+                <option><a href="#">79</a></option>
+                <option><a href="#">80</a></option>
+                <option><a href="#">81</a></option>
+                <option><a href="#">82</a></option>
+                <option><a href="#">83</a></option>
+                <option><a href="#">84</a></option>
+                <option><a href="#">85</a></option>
+                <option><a href="#">86</a></option>
+                <option><a href="#">87</a></option>
+                <option><a href="#">88</a></option>
+                <option><a href="#">89</a></option>
+                <option><a href="#">90</a></option>
+                <option><a href="#">91</a></option>
+                <option><a href="#">92</a></option>
+                <option><a href="#">93</a></option>
+                <option><a href="#">94</a></option>
+                <option><a href="#">95</a></option>
+                <option><a href="#">96</a></option>
+                <option><a href="#">97</a></option>
+                <option><a href="#">98</a></option>
+                <option><a href="#">99</a></option>
 
+              </select>
 
-              <span class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Year
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">70</a></li>
-                <li><a href="#">72</a></li>
-                <li><a href="#">73</a></li>
-                <li><a href="#">74</a></li>
-                <li><a href="#">75</a></li>
-                <li><a href="#">76</a></li>
-                <li><a href="#">77</a></li>
-                <li><a href="#">78</a></li>
-                <li><a href="#">79</a></li>
-                <li><a href="#">80</a></li>
-                <li><a href="#">81</a></li>
-                <li><a href="#">82</a></li>
-                <li><a href="#">83</a></li>
-                <li><a href="#">84</a></li>
-                <li><a href="#">85</a></li>
-                <li><a href="#">86</a></li>
-                <li><a href="#">87</a></li>
-                <li><a href="#">88</a></li>
-                <li><a href="#">89</a></li>
-                <li><a href="#">90</a></li>
-                <li><a href="#">91</a></li>
-                <li><a href="#">92</a></li>
-                <li><a href="#">93</a></li>
-                <li><a href="#">94</a></li>
-                <li><a href="#">95</a></li>
-                <li><a href="#">96</a></li>
-                <li><a href="#">97</a></li>
-                <li><a href="#">98</a></li>
-                <li><a href="#">99</a></li>
-
-              </ul>
-
-            </span>
-            <br>
-            <br>
             <button type="submit" class="btn btn-primary">Submit</button>
             </br>
             </form>
