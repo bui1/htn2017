@@ -28,7 +28,7 @@ login_manager.init_app(app)
 # Show homepage
 @app.route('/')
 def showHomepage():
-    return render_template('index.html')
+    return render_template('front.html')
 
 # show about us
 @app.route('/about-us')
