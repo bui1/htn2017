@@ -69,17 +69,7 @@ class Message(Base):
     thread = Column(Integer)
     body = Column(Text, nullable=False)
     attachment = Column(String(500))
-
-# Message users class
-class MessageUser(Base):
-    __tablename__ = 'msg_user'
-
-    msg_id = Column(Integer, ForeignKey('msg.id'))
-    user_to = Column(Integer, ForeignKey('user.id'))
-    user_from = Column(Integer, ForeignKey('user.id'))
-    __table_args__ = (
-        PrimaryKeyConstraint('msg_id', 'user_to', 'user_from'),
-        )
+    user_from = Column(Integer)
     
 # Run the database code
 if __name__ == '__main__':

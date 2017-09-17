@@ -19,17 +19,42 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script type="text/javascript" charset="utf-8">
 	  function saveMessage(text) {
-	  $('#chat').append($("<div class='msg_a'>" + text + "</div>"));
+	  $('#chat').append($("<div class='msg_a'><strong>{{ user.username }}:</strong> " + text + "</div>"));
 
 	  $.ajax({
 	  type: "POST",
-	  url: "/chat-send",
+	  url: "/chat-send/{{ lang }}",
 	  ContentType : 'application/json',
 	  data : {'data': text}
 	  });
 	  }
-
+	  
 	  $(document).ready(function(){
+
+	  (function getMsg() {
+	  setTimeout(function() {
+          $.ajax({
+          url: "/chat/{{ lang }}",
+          type: "GET",
+          success: function(data) {
+          $("html").html(data);
+	  console.log(data);
+	  },
+          dataType: "json",
+          complete: getMsg,
+          timeout: 2000
+          })
+	  }, 5000);
+	  })();
+	  
+	  function msgGet() {
+	  $.ajax({
+	  type: "POST",
+	  url: "/chat/{{ lang }}",
+	  ContentType: "application/json",
+	  timeout: 2000
+	  });};
+	  
 	  $('#text').keypress(function(e) {
           var code = e.keyCode || e.which;
           if (code == 13) {
@@ -37,7 +62,10 @@
 	    $('#text').val('');
 	    saveMessage(text);
 	  }
-          })});
+          })
+	
+	  }
+	  );
 
 	</script>
   </head>
@@ -93,9 +121,17 @@
 
       <div class="col-lg-9">
 
-	<h4>Chatting with <em>{{ user_to.username }}</em></h4>
+	<h4><em>{% if (room == 0) %}English Chat Room{% else %}French Chat{% endif %}</em></h4>
 	
 	<div id="chat">
+	  {% for post in posts %}
+	  {% if (post[0].user_from != user.id) %}
+	  <div class="msg-a"><strong>{{ post[1].username }}: </strong> {{ post[0].body }}</div>
+	  {% else %}
+	  <div class="msg-b"><strong>{{ post[1].username }}: </strong>{{ post[0].body }}</div>
+	  {% endif %}
+	  {% endfor %}
+	  
 	</div>
 
 	<input id="text" size="80" placeholder="Enter your message here"><br><br>                    

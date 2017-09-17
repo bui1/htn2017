@@ -8,6 +8,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secretkeyforhtn2017'
 app.config['UPLOAD_FOLDER']  = '/imgs/avatars'
 app.config['DEBUG'] = True
+app.config['THREADED'] = True
 socketio = SocketIO(app)
 
 from sqlalchemy import create_engine, asc
@@ -207,15 +208,21 @@ def upload(user_id):
 def chat_view(lang):
     user_id = session.get('user_id')
     room = session.get('msg_id')
-
+    session['lang'] = lang
+    
     chat_lang = str(lang)
 
     user = db_session.query(User).filter_by(id=user_id).one()
-    
-    user_to = db_session.query(User).filter_by(active=1).filter_by(lang=chat_lang).first()
-    print(str(user_to.id) + " " + str(user.id))
 
-    return render_template('chat.html', user=user, user_to=user_to, room=lang)
+    posts = db_session.query(Message,User).filter(Message.user_from==User.id).order_by(Message.timestamp).limit(30).all()
+
+    for post in posts:
+        print(post[0])
+        print(post[1])
+        print(post[0].user_from)
+    print(posts)
+    
+    return render_template('chat.html', user=user, posts=posts, lang=lang, room=room)
 
 @app.route('/chat-recv', methods = ['GET'])
 def recv_msg():
@@ -225,15 +232,16 @@ def recv_msg():
     msgs = session.query(Message).filter_by(timestamp )
     return
 
-@app.route('/chat-send/', methods = ['POST'])
-def send_msg():
+@app.route('/chat-send/<int:lang>', methods = ['POST'])
+def send_msg(lang):
     lang = session.get('lang')
     print(request.form)
     message = request.form.to_dict()
     
     msg = Message(
-        body = message['data']
-        )
+        body = message['data'],
+        user_from = session.get('user_id')
+    )
 
     db_session.add(msg)
 
@@ -241,24 +249,7 @@ def send_msg():
 
     db_session.commit()
 
-    user_id= db_session.query(User).filter_by(id=session.get('user_id')).one()
-
-    #TODO
-    user_to_id = session.get('to_user');
-    
-    msg_user = MessageUser(
-        msg_id = msg.id,
-        user_to = user_to_id,
-        user_from = user_id.id
-    )
-
-    db_session.add(msg_user)
-
-    db_session.flush()
-
-    db_session.commit()
-
-    return redirect(url_for('chat_view'))
+    return redirect(url_for('chat_view', lang=lang))
 
 if __name__ == '__main__':
     socketio.run(app)
