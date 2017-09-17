@@ -34,13 +34,16 @@
 	  (function getMsg() {
 	  setTimeout(function() {
           $.ajax({
-          url: "/chat/{{ lang }}",
+          url: "/chat/refresh/{{ lang }}",
           type: "GET",
           success: function(data) {
-          $("html").html(data);
+          $("#chat").append(data);
 	  console.log(data);
 	  },
-          dataType: "json",
+	  error: function(xhr, a, error) {
+	  console.log(error);
+	  },
+          dataType: "html",
           complete: getMsg,
           timeout: 2000
           })
