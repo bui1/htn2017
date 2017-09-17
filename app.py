@@ -1,4 +1,4 @@
-erom flask import Flask, session, render_template, request, redirect,jsonify, url_for, flash
+from flask import Flask, session, render_template, request, redirect,jsonify, url_for, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_login import *
 from form import LoginForm
@@ -174,33 +174,6 @@ def dashboard_view():
     
     return(render_template ('dashboard.html', user=user)) 
 
-#### UPLOAD ####
-def allowed(filename):
-    allowed = set(['jpg','png','jpeg','gif'])
-    
-    if '.' in filename and filename.split('.',1)[1].lower() in allowed:
-        return true
-    return false
-
-@app.route('/upload/', methods = ['GET', 'POST'])
-@login_required
-def upload(user_id):
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return redirect(request.url)
-
-        file = request.files['file']
-
-        if file.filename == "":
-            flash('No file selected')
-
-        if file and allowed(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['upload_folder'], filename))
-            return redirect(url_for('uploaded_file', filename=filename))
-    return render_template('upload.html')
-    
-
 #### CHAT ####
 
 @app.route('/chat/<int:lang>', methods = ['GET', 'POST'])
@@ -214,7 +187,7 @@ def chat_view(lang):
 
     user = db_session.query(User).filter_by(id=user_id).one()
 
-    posts = db_session.query(Message,User).filter(Message.user_from==User.id).order_by(Message.timestamp).limit(30).all()
+    posts = db_session.query(Message,User).filter_by(thread=lang).filter(Message.user_from==User.id).order_by(Message.timestamp).limit(30).all()
 
     for post in posts:
         print(post[0])
@@ -222,15 +195,7 @@ def chat_view(lang):
         print(post[0].user_from)
     print(posts)
     
-    return render_template('chat.html', user=user, posts=posts, lang=lang, room=room)
-
-@app.route('/chat-recv', methods = ['GET'])
-def recv_msg():
-    user = session.get('user_id')
-    room = session.get('msg_id')
-
-    msgs = session.query(Message).filter_by(timestamp )
-    return
+    return render_template('chat.html', user=user, posts=posts, lang=lang, room=lang)
 
 @app.route('/chat-send/<int:lang>', methods = ['POST'])
 def send_msg(lang):
@@ -253,4 +218,3 @@ def send_msg(lang):
 
 if __name__ == '__main__':
     socketio.run(app)
-	return "Hello Azure!"

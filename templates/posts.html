@@ -1,0 +1,8 @@
+{% for post in posts %}
+{% if (post[0].user_from != user.id) %}
+<div class="msg-a"><strong>{{ post[1].username }}: </strong> {{ post[0].body }}</div>
+{% else %}
+<div class="msg-b"><strong>{{ post[1].username }}: </strong>{{ post[0].body }}</div>
+{% endif %}
+{% endfor %}
+	  
