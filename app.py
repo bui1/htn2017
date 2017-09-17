@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
-from flask_socketio import SocketIO, join_room, leave_room
+from flask import Flask, session, render_template, request, redirect,jsonify, url_for, flash
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_login import *
 from form import LoginForm
 from werkzeug.utils import secure_filename
@@ -19,7 +19,7 @@ engine = create_engine('sqlite:///langchat.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+db_session = DBSession()
 
 # Start login
 login_manager = LoginManager()
@@ -37,7 +37,7 @@ def showHomepage():
 @login_required
 def user_view(user_id):
     # search db for user by user id
-    user = session.query(User).filter_by(id = user_id).one()
+    user = db_session.query(User).filter_by(id = user_id).one()
 
     # render the html page
     # return render_template('profile.html', user)
@@ -48,7 +48,7 @@ def user_view(user_id):
 @login_required
 def user_edit(user_id):
     # search db for user by user id
-    user = session.query(User).filter_by(id = user_id).one()
+    user = db_session.query(User).filter_by(id = user_id).one()
 
     #user submits form
     if request.method == 'POST':
@@ -65,7 +65,7 @@ def user_edit(user_id):
 ### LOGIN ####
 @login_manager.user_loader
 def load_user(user_id):
-    return session.query(User).filter_by(id=user_id).first()
+    return db_session.query(User).filter_by(id=user_id).first()
 
 @app.route("/logout/")
 @login_required
@@ -75,16 +75,18 @@ def logout():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
+    db_session.flush()
+    
     form = LoginForm()
     
     if form.validate_on_submit():
-        user = session.query(User).filter_by(username = request.form['username']).first()
+        user = db_session.query(User).filter_by(username = request.form['username']).first()
 
         login_user(user)
 
         flash('Logged in successfully.')
 
-        
+        session['user_id'] = user.id
         
         return redirect(url_for('dashboard_view', user_id=user.id))
     else:
@@ -95,6 +97,8 @@ def login():
 # New profile
 @app.route('/user/new', methods = ['GET', 'POST'])
 def user_new():
+    db_session.flush()
+    
     # user submits form
     if request.method == 'POST':
         print(request.form)
@@ -102,71 +106,24 @@ def user_new():
         user = User(
             username = request.form['username'],
             email = request.form['email'],
-            first_name = request.form['first_name'],
-            last_name = request.form['last_name'],
             birthdate = datetime.datetime.strptime(request.form['birthdate'], "%Y-%m-%d"),
-            gender = request.form['gender']
+            gender = request.form['gender'],
+            password = request.form['password']
         )
         
         try:
             # add user
-            session.add(user)
+            db_session.add(user)
 
             # flush
-            session.flush()
+            db_session.flush()
             
             # commit database
-            session.commit()
+            db_session.commit()
             
         except Exception as e:
             print(e)
             
-        user_id = user.id
-        
-        # lang to learn
-        langs_learn = request.form['lang_learn']
-
-        # get language ids
-        lang_learn_ids = get_lang_ids(langs_learn)
-
-        for id in lang_learn_ids:
-            lang_rel = LangLearn(
-                lang_id = id,
-                user_id = user_id
-            )
-
-            try:
-                session.add(lang_rel)
-
-                session.flush()
-
-                session.commit()
-            except Exception as e:
-                print(e)
-        # lang to teach
-        langs_teach = request.form['lang_teach']
-
-        # get language ids
-        lang_teach_ids = get_lang_ids(langs_teach)
-
-        for id in lang_teach_ids:
-            lang_rel = LangTeach(
-                lang_id = id,
-                user_id = user_id
-            )
-
-            try:
-                session.add(lang_rel)
-
-                session.flush()
-
-                session.commit()
-        
-            except Exception as e:
-                print(e)
-    
-        return redirect(url_for('dashboard_view'))
-
     # user sees form
     else:
         return(render_template('user_edit.html'))
@@ -176,7 +133,7 @@ def get_lang_ids(langs):
     lang_array = []
 
     for lang in langs:
-        lang_id = session.query(Lang).filter_by(name=lang).all()
+        lang_id = db_session.query(Lang).filter_by(name=lang).all()
         lang_array.append(lang_id)
     
     return(lang_array)
@@ -184,9 +141,8 @@ def get_lang_ids(langs):
 #### DASHBOARD #####
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 @login_required
-def dashboard_view():
-    # return(render_template ('dashboard.html')) 
-    return("...")
+def dashboard_view(user):
+    return(render_template ('dashboard.html', user=user)) 
 
 #### UPLOAD ####
 def allowed(filename):
@@ -217,32 +173,56 @@ def upload(user_id):
 
 #### CHAT ####
 
-@app.route('/chat/', methods = ['GET', 'POST'])
+@app.route('/chat', methods = ['GET', 'POST'])
 @login_required
 def chat_view():
-    return(render_template("chat.html"))
+    user = session.get('user_id')
+    room = session.get('msg_id')
+    return render_template('chat.html', user=user, room=room)
 
-@socketio.on('get message', namespace='/chat')
-def handle_my_custom_namespace_event(json):
-    print('Received json: ' + str(json))
+@app.route('/chat-recv', methods = ['GET'])
+def recv_msg():
+    user = session.get('user_id')
+    room = session.get('msg_id')
+
+    msgs = session.query(Message).filter_by(timestamp )
+    return
+
+@app.route('/chat-send', methods = ['POST'])
+def send_msg():
+    message = request.form.to_dict()
+    print(message)
+    for key in message:
+        msg = key
     
-@socketio.on('send message')
-def handle_my_custom_namespace_event(json):
-    emit('my response', json, namespace='/chat')
+    msg = Message(
+        body = msg
+        )
 
-@socketio.on('join')
-def on_join(data):
-    username = data
-    room = data['room']
-    join_room(room)
-    send(username + 'has entered the chat')
+    db_session.add(msg)
 
-@socketio.on('leave')
-def on_leave(data):
-    username = data['username']
-    room = data['room']
-    leave_room(room)
-    send(username + ' has left the chat')
+    db_session.flush()
+
+    db_session.commit()
+
+    user_id= db_session.query(User).filter_by(id=session.get('user_id')).one()
+
+    #TODO
+    user_to_id = session.get('to_user');
     
+    msg_user = MessageUser(
+        msg_id = msg.id,
+        user_to = user_to_id,
+        user_from = user_id.id
+    )
+
+    db_session.add(msg_user)
+
+    db_session.flush()
+
+    db_session.commit()
+
+    return redirect(url_for('chat_view'))
+
 if __name__ == '__main__':
     socketio.run(app)
