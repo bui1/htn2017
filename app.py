@@ -37,7 +37,7 @@ def showHow():
 # show about us
 @app.route('/about-us')
 def showAbout():
-    return(render_template('aboutus.html'))
+    return(render_template('about-us.html'))
 
 #### PROFILE ####
 
@@ -82,25 +82,33 @@ def load_user(user_id):
 @app.route("/logout/")
 @login_required
 def logout():
+    user = db_session.query(User).filter_by(id=session.get('user_id')).one()
+
+    user.active = 0
+
+    db_session.commit()
+    
     logout_user()
     return redirect(url_for('showHomepage'))
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
-    db_session.flush()
-    
     form = LoginForm()
     
     if form.validate_on_submit():
         user = db_session.query(User).filter_by(username = request.form['username']).first()
 
+        user.active = 1
+
+        db_session.commit()
+        
         login_user(user)
 
         flash('Logged in successfully.')
 
         session['user_id'] = user.id
         
-        return redirect(url_for('dashboard_view', user_id=user.id))
+        return redirect(url_for('dashboard_view', user_id=user))
     else:
         flash('Username or password incorrect', 'error')
         
@@ -109,20 +117,24 @@ def login():
 # New profile
 @app.route('/user/new', methods = ['GET', 'POST'])
 def user_new():
-    db_session.flush()
     
     # user submits form
     if request.method == 'POST':
         print(request.form)
 
+        birthday = "19" + request.form['birthyear'] + "-" + request.form['birthmonth'] + "-" + request.form['birthday']
+        
         user = User(
             username = request.form['username'],
             email = request.form['email'],
-            birthdate = datetime.datetime.strptime(request.form['birthdate'], "%Y-%m-%d"),
+            birthdate = datetime.datetime.strptime(birthday, "%Y-%m-%d"),
             gender = request.form['gender'],
-            password = request.form['password']
+            password = request.form['password'],
+            active = 0,
+            lang = request.form['lang']
         )
-        
+
+        print(user)
         try:
             # add user
             db_session.add(user)
@@ -132,13 +144,16 @@ def user_new():
             
             # commit database
             db_session.commit()
+
+            return(redirect(url_for('login')))
             
         except Exception as e:
             print(e)
+            return(render_template('profile-page.html', user=None, female=None))
             
     # user sees form
     else:
-        return(render_template('profile-page.html'))
+        return(render_template('profile-page.html', user=None, female=None))
 
 # get the id of a list of languages
 def get_lang_ids(langs):
@@ -154,7 +169,7 @@ def get_lang_ids(langs):
 @app.route('/dashboard/', methods = ['GET', 'POST'])
 @login_required
 def dashboard_view():
-    user = session.get('user_id');
+    user = db_session.query(User).filter_by(id=session.get('user_id')).one();
     
     return(render_template ('dashboard.html', user=user)) 
 
@@ -165,7 +180,6 @@ def allowed(filename):
     if '.' in filename and filename.split('.',1)[1].lower() in allowed:
         return true
     return false
-
 
 @app.route('/upload/', methods = ['GET', 'POST'])
 @login_required
@@ -188,12 +202,20 @@ def upload(user_id):
 
 #### CHAT ####
 
-@app.route('/chat', methods = ['GET', 'POST'])
+@app.route('/chat/<int:lang>', methods = ['GET', 'POST'])
 @login_required
-def chat_view():
-    user = session.get('user_id')
+def chat_view(lang):
+    user_id = session.get('user_id')
     room = session.get('msg_id')
-    return render_template('chat.html', user=user, room=room)
+
+    chat_lang = str(lang)
+
+    user = db_session.query(User).filter_by(id=user_id).one()
+    
+    user_to = db_session.query(User).filter_by(active=1).filter_by(lang=chat_lang).first()
+    print(str(user_to.id) + " " + str(user.id))
+
+    return render_template('chat.html', user=user, user_to=user_to, room=lang)
 
 @app.route('/chat-recv', methods = ['GET'])
 def recv_msg():
@@ -203,15 +225,14 @@ def recv_msg():
     msgs = session.query(Message).filter_by(timestamp )
     return
 
-@app.route('/chat-send', methods = ['POST'])
+@app.route('/chat-send/', methods = ['POST'])
 def send_msg():
+    lang = session.get('lang')
+    print(request.form)
     message = request.form.to_dict()
-    print(message)
-    for key in message:
-        msg = key
     
     msg = Message(
-        body = msg
+        body = message['data']
         )
 
     db_session.add(msg)

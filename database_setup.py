@@ -6,7 +6,6 @@ import datetime
  
 Base = declarative_base()
 
-
 # User class
 class User(Base):
     __tablename__ = 'user'
@@ -18,15 +17,16 @@ class User(Base):
     email = Column(String(100), nullable=False)
     password = Column(String(200))
 
+    active = Column(Integer)
+    lang = Column(Enum('0', '1')) 
     authenticated = False
-    active = False
     anon = False
     
     def is_authenticated():
         return self.authenticated
 
     def is_active(self):
-        return self.active
+        return active == 1
 
     def is_anonymous(self):
         return False
